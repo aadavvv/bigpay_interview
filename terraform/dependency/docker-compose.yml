@@ -1,0 +1,26 @@
+### Docker Compose file for Jenkins ###
+version: '2'
+services:
+  jenkins:
+    image: jenkins/jenkins:latest
+    command: --prefix=/jenkins
+    container_name: jenkins
+    user: root
+    restart: always
+    volumes:
+      - /data/jenkins_home:/var/jenkins_home
+    ports:
+      - "80:8080"
+      - "9000:9000"
+      - "50000:50000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    environment:
+      - JAVA_OPTS=-Duser.timezone=Asia/Singapore -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true -Djava.security.egd=file:/dev/./urandom -Dhudson.model.DirectoryBrowserSupport.CSP="" -XX:+AlwaysPreTouch -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/jenkins_home/logs/jvm_heap_dump.log -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled -XX:+DisableExplicitGC -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -Djava.io.tmpdir=/tmp -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true
+      - JENKINS_SLAVE_AGENT_PORT=9000
+      - JENKINS_OPTS=-httpKeepAliveTimeout=60000 --accessLoggerClassName=winstone.accesslog.SimpleAccessLogger --simpleAccessLogger.format=combined --simpleAccessLogger.file=/var/jenkins_home/logs/access.log
+
+
